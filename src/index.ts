@@ -172,7 +172,8 @@ export default {
           triedIndex = true;
         } else if (env.DIRECTORY_LISTING) {
           // return the dir listing
-          let listResponse = await makeListingResponse(path += env.INDEX_FILE, env, request);
+          path += env.INDEX_FILE // This because we are using R2 to reach objects
+          let listResponse = await makeListingResponse(path, env, request);
 
           if (listResponse !== null) {
             if (listResponse.headers.get("cache-control") !== "no-store") {
@@ -194,6 +195,9 @@ export default {
         const rangeHeader = request.headers.get("range");
         if (rangeHeader) {
           file = await env.R2_BUCKET.head(path);
+          if (!file) { // This additional if is because we are using R2 to try and reach the data with the index.html appended
+            file = await env.R2_BUCKET.head(path + env.INDEX_FILE);
+          }
           if (file === null) return new Response("File Not Found", { status: 404 });
           const parsedRanges = parseRange(file.size, rangeHeader);
           // R2 only supports 1 range at the moment, reject if there is more than one
