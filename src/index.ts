@@ -172,7 +172,7 @@ export default {
           triedIndex = true;
         } else if (env.DIRECTORY_LISTING) {
           // return the dir listing
-          let listResponse = await makeListingResponse(path, env, request);
+          let listResponse = await makeListingResponse(path += env.INDEX_FILE, env, request);
 
           if (listResponse !== null) {
             if (listResponse.headers.get("cache-control") !== "no-store") {
