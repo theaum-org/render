@@ -196,7 +196,7 @@ export default {
         if (rangeHeader) {
           file = await env.R2_BUCKET.head(path);
           if (!file) { // This additional if is because we are using R2 to try and reach the data with the index.html appended
-            file = await env.R2_BUCKET.head(path + env.INDEX_FILE);
+            file = await env.R2_BUCKET.head(path + "/" + env.INDEX_FILE);
           }
           if (file === null) return new Response("File Not Found", { status: 404 });
           const parsedRanges = parseRange(file.size, rangeHeader);
